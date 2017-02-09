@@ -1,9 +1,13 @@
-package com.dbserver;
+package com.dbserver.voting;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Import;
 
-@SpringBootApplication
+import com.dbserver.voting.configuration.JpaConfiguration;
+
+@Import(JpaConfiguration.class)
+@SpringBootApplication(scanBasePackages={"com.dbserver.voting"})
 public class VotingApplication {
 
 	public static void main(String[] args) {
