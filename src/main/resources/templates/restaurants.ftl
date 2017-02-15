@@ -36,15 +36,13 @@
                 <table class="table table-hover">
                     <thead>
                     <tr>
-                        <th>ID</th>
                         <th>NAME</th>
                         <th width="100"></th>
                         <th width="100"></th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr ng-repeat="r in restaurantsCtrl.getAllRestaurants()">
-                        <td>{{r.id}}</td>
+                    <tr ng-repeat="r in restaurantsCtrl.getAllRestaurants() | orderBy:'name'">
                         <td>{{r.name}}</td>
                         <td><button type="button" ng-click="restaurantsCtrl.editRestaurant(r.id)" class="btn btn-success custom-width">Edit</button></td>
                         <td><button type="button" ng-click="restaurantsCtrl.removeRestaurant(r.id)" class="btn btn-danger custom-width">Remove</button></td>

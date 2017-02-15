@@ -1,42 +1,41 @@
 'use strict';
  
 angular.module('votingApp').controller('VotesController',
-    ['VotesService','UsersService','RestaurantsService', '$scope', function(VotesService, UsersService, RestaurantsService, $scope) {
+    ['VotesService', 'RestaurantsService', 'LoginService', '$scope', '$localStorage', 
+    	function(VotesService, RestaurantsService, LoginService, $scope, $localStorage) {
 
     let vm = this;
     vm.vote = {};
     vm.votes = [];
-    vm.userId = {};
-    vm.users = null;
-    vm.restaurantId = null;
+    vm.restaurant = {};
     vm.restaurants = [];
  
     vm.submit = submit;
-    vm.getAllVotes = getAllVotes;
     vm.createVote = createVote;
+    vm.getAllVotes = getAllVotes;
     vm.reset = reset;
  
     vm.successMessage = '';
     vm.errorMessage = '';
     vm.done = false;
 
-    // Looking for users 
-    vm.users = UsersService.getAllUsers();
-
     // Looking for restaurants
     vm.restaurants = RestaurantsService.getAllRestaurants();
 
     function submit() {
         console.log('Submitting');
-        console.log('Saving New Vote', vm.vote);
+        
+        // Make a correct date format for voting
         let currentTime = new Date();
         let year, month, day;
-        year = String(currentTime.getFullYear());
-        month = String(currentTime.getMonth() + 1);
-        month = (month < 10) ? '0'+month: month; 
-        day = String(currentTime.getDate());
-        day = (day < 10) ? '0'+day: day;
-        vm.vote.votingDate = year + '-' + month + '-' + day; 
+        year = currentTime.getFullYear();
+        month = currentTime.getMonth();
+        day = currentTime.getDate();
+        vm.vote.votingDate = new Date(year, month, day);
+        vm.vote.user = LoginService.isAuth();
+        vm.vote.restaurant = JSON.parse(vm.restaurant);
+        console.log('Saving New Vote', vm.vote);
+
         createVote(vm.vote);
     }
  

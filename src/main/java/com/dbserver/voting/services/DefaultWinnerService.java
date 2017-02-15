@@ -1,7 +1,9 @@
 package com.dbserver.voting.services;
 
 import java.sql.Date;
+import java.util.Calendar;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,6 +31,13 @@ public class DefaultWinnerService implements WinnerService {
 
 	@Override
 	public void saveWinner(Winner winner) {
+		if(winner.getId() == null  || winner.getId().isEmpty()) {
+			UUID uuid = UUID.randomUUID();
+			winner.setId(uuid.toString());
+		}
+		if(winner.getLunchDate() == null) {
+			winner.setLunchDate(new Date(Calendar.getInstance().getTimeInMillis()));
+		}
 		winnerRepository.save(winner);
 		
 	}

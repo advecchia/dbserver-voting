@@ -1,8 +1,8 @@
 'use strict';
- 
+
 angular.module('votingApp').controller('RestaurantsController',
     ['RestaurantsService', '$scope', function( RestaurantsService, $scope) {
-
+	"ngInject";
     let vm = this;
     vm.restaurant = {};
     vm.restaurants = [];
@@ -64,7 +64,7 @@ angular.module('votingApp').controller('RestaurantsController',
 		        },
 		        function(errResponse){
 		            console.error('Error while updating Restaurant');
-		            vm.errorMessage='Error while updating Restaurant '+errResponse.data;
+		            vm.errorMessage='Error while updating Restaurant: ' + errResponse.data.errorMessage;
 		            vm.successMessage='';
 	            }
 	        );
@@ -77,7 +77,7 @@ angular.module('votingApp').controller('RestaurantsController',
                 console.log('Restaurant '+id + ' removed successfully');
             },
             function(errResponse){
-            	console.error('Error while removing Restaurant '+id +', Error :'+errResponse.data);
+            	console.error('Error while removing Restaurant: '+ id +', Error: ' + errResponse.data.errorMessage);
             }
         );
     }
@@ -94,7 +94,7 @@ angular.module('votingApp').controller('RestaurantsController',
                 vm.restaurant = restaurant;
             },
             function (errResponse) {
-                console.error('Error while removing Restaurant ' + id + ', Error :' + errResponse.data);
+                console.error('Error while removing Restaurant: ' + id + ', Error: ' + errResponse.data.errorMessage);
             }
         );
     }

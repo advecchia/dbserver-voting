@@ -1,27 +1,47 @@
 package com.dbserver.voting.models;
 
 import java.io.Serializable;
+import java.util.Set;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Table(name="restaurants")
 public class Restaurant implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 8822353414193879336L;
+
+	@JsonProperty("id")
+	private String id;
+    
+	@JsonProperty("name")
+	private String name;
+
+	private Set<Winner> winners;
+	private Set<Vote> votes;
+
+	public Restaurant() {
+		super();
+	}
+
+	@JsonCreator(mode=JsonCreator.Mode.DELEGATING)
+	public Restaurant(@JsonProperty("id") String id, @JsonProperty("name") String name, 
+			@JsonProperty("winners") Set<Winner> winners, @JsonProperty("votes") Set<Vote> votes) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.winners = winners;
+		this.votes = votes;
+	}
 
 	@Id
 	@NotNull
     @Column(name="id", nullable=false)
-    private String id;
- 
-	@NotNull
-    @Column(name="name", nullable=false)
-    private String name;
-
 	public String getId() {
 		return id;
 	}
@@ -30,12 +50,34 @@ public class Restaurant implements Serializable {
 		this.id = id;
 	}
 
+	@NotNull
+    @Column(name="name", nullable=false)
 	public String getName() {
 		return name;
 	}
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	@JsonIgnore
+	@OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL)
+	public Set<Winner> getWinners() {
+		return winners;
+	}
+
+	public void setWinners(Set<Winner> winners) {
+		this.winners = winners;
+	}
+
+	@JsonIgnore
+	@OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL)
+	public Set<Vote> getVotes() {
+		return votes;
+	}
+
+	public void setVotes(Set<Vote> votes) {
+		this.votes = votes;
 	}
 
 	@Override
@@ -66,12 +108,22 @@ public class Restaurant implements Serializable {
 				return false;
 		} else if (!name.equals(other.name))
 			return false;
+		if (winners == null) {
+			if (other.winners != null)
+				return false;
+		} else if (!winners.equals(other.winners))
+			return false;
+		if (votes == null) {
+			if (other.votes != null)
+				return false;
+		} else if (!votes.equals(other.votes))
+			return false;
 		return true;
 	}
 
 	@Override
 	public String toString() {
-		return "Restaurant [id=" + id + ", name=" + name + "]";
+		return "Restaurant [id=" + id + ", name=" + name + ", winners=" + winners + ", votes=" + votes + "]";
 	}
     
 }

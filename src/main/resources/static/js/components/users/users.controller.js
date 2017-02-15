@@ -1,10 +1,11 @@
 'use strict';
  
 angular.module('votingApp').controller('UsersController',
-    ['UsersService', '$scope', function( UsersService, $scope) {
+    ['UsersService', '$scope', '$state', function( UsersService, $scope, $state) {
 
     let vm = this;
     vm.user = {};
+    vm.password = '';
     vm.users = [];
  
     vm.submit = submit;
@@ -14,6 +15,7 @@ angular.module('votingApp').controller('UsersController',
     vm.removeUser = removeUser;
     vm.editUser = editUser;
     vm.reset = reset;
+    vm.backToLogin = backToLogin;
  
     vm.successMessage = '';
     vm.errorMessage = '';
@@ -32,6 +34,7 @@ angular.module('votingApp').controller('UsersController',
  
     function createUser(user) {
         console.log('About to create user');
+        vm.user.password = btoa(vm.password || '')
         UsersService.createUser(user)
 	        .then(
 	            function (response) {
@@ -40,6 +43,7 @@ angular.module('votingApp').controller('UsersController',
 	                vm.errorMessage='';
 	                vm.done = true;
 	                vm.user = {};
+	                vm.password = '';
 	                $scope.usersForm.$setPristine();
 	            },
 	            function (errResponse) {
@@ -64,7 +68,7 @@ angular.module('votingApp').controller('UsersController',
 		        },
 		        function(errResponse){
 		            console.error('Error while updating User');
-		            vm.errorMessage='Error while updating User '+errResponse.data;
+		            vm.errorMessage='Error while updating User '+errResponse.data.errorMessage;
 		            vm.successMessage='';
 	            }
 	        );
@@ -78,7 +82,7 @@ angular.module('votingApp').controller('UsersController',
                     console.log('User '+id + ' removed successfully');
                 },
                 function(errResponse){
-                	console.error('Error while removing user '+id +', Error :'+errResponse.data);
+                	console.error('Error while removing user '+id +', Error :'+errResponse.data.errorMessage);
                 }
             );
     }
@@ -95,7 +99,7 @@ angular.module('votingApp').controller('UsersController',
                 vm.user = user;
             },
             function (errResponse) {
-                console.error('Error while removing user ' + id + ', Error :' + errResponse.data);
+                console.error('Error while removing user ' + id + ', Error :' + errResponse.data.errorMessage);
             }
         );
     }
@@ -105,5 +109,10 @@ angular.module('votingApp').controller('UsersController',
         vm.errorMessage='';
         vm.user = {};
         $scope.usersForm.$setPristine(); //reset Form
+    }
+
+    function backToLogin() {
+        console.log('Change state to login');
+        $state.go('login');
     }
 }]);

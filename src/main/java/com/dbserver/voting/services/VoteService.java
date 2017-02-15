@@ -6,7 +6,7 @@ import java.util.List;
 import com.dbserver.voting.models.Vote;
 
 public interface VoteService {
-	Vote findByIds(String userId, String restaurantId, Date votingDate);
+	Vote findById(String id);
 
 	List<Vote> findByVotingDate(Date votingDate);
 
@@ -18,11 +18,13 @@ public interface VoteService {
  
     void updateVote(Vote vote);
  
-    void deleteVoteById(String userId, String restaurantId, Date votingDate);
+    void deleteVoteById(String id);
  
     void deleteAllVotes();
  
     List<Vote> findAllVotes();
  
     boolean isVoteExist(Vote vote);
+    
+    public void executeVoting(Date votingDate);
 }

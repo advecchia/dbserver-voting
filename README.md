@@ -51,13 +51,13 @@ open the following configuration file:
 > $ sudo gedit $CATALINA_HOME/conf/tomcat-users.xml  
 
 Add the following lines between the tags `<tomcat-users>` and `</tomcat-users>`:
-> <!-- user manager can access only manager section -->  
-> <role rolename="manager-gui" />  
-> <user username="manager" password="_SECRET_PASSWORD_" roles="manager-gui" />  
+> `<!-- user manager can access only manager section -->`  
+> `<role rolename="manager-gui" />`  
+> `<user username="manager" password="_SECRET_PASSWORD_" roles="manager-gui" />`  
 
-> <!-- user admin can access manager and admin section both -->  
-> <role rolename="admin-gui" />  
-> <user username="admin" password="_SECRET_PASSWORD_" roles="manager-gui,admin-gui" />  
+> `<!-- user admin can access manager and admin section both -->`  
+> `<role rolename="admin-gui" />`  
+> `<user username="admin" password="_SECRET_PASSWORD_" roles="manager-gui,admin-gui" />`  
 
 For security, change the passwords
 
@@ -76,20 +76,21 @@ Download the application from Git using the following [repository](https://githu
 > $ git clone https://github.com/advecchia/dbserver-voting.git  
 > $ cd dbserver-voting  
 
-Update the target folder and run the system in local or production modes:
-> $ mvn clean install  
-> $ java -jar target/voting-0.0.1-SNAPSHOT.jar --spring.profiles.active=local  
-> $ java -jar target/voting-0.0.1-SNAPSHOT.jar --spring.profiles.active=prod  
+Update the target folder and run the system in local or production modes:  
+> $ mvn spring-boot:run -Drun.profiles=local  
+> $ mvn spring-boot:run -Drun.profiles=prod  
 
 Open in your browser this [System url](http://localhost:8080/voting).
+
 
 # Tests
 An automated test coverage is important so a value over 90% is considered acceptable.
 To run the tests execute the following command:
 > $ TBD
+> $ karma run  
 
 # Challenges
-Thinking about the needed architecture and also make the initial setup configuration is of course the most part of the problem.
+Think about the architecture and also make the initial setup configuration is of course the most difficult part of the task.
 
 # Improvements
 Configure the use of Flyway plugin to deal with database migrations.

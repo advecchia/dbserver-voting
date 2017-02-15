@@ -3,13 +3,13 @@ package com.dbserver.voting.services;
 import java.sql.Date;
 import java.util.Calendar;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.dbserver.voting.models.Vote;
-import com.dbserver.voting.models.VotePK;
 import com.dbserver.voting.repositories.VoteRepository;
 
 @Service("voteService")
@@ -20,8 +20,8 @@ public class DefaultVoteService implements VoteService {
     private VoteRepository voteRepository;
 
 	@Override
-	public Vote findByIds(String userId, String restaurantId, Date votingDate) {
-		return voteRepository.findOne(new VotePK(userId, restaurantId, votingDate));
+	public Vote findById(String id) {
+		return voteRepository.findOne(id);
 	}
 
 	@Override
@@ -41,6 +41,10 @@ public class DefaultVoteService implements VoteService {
 
 	@Override
 	public void saveVote(Vote vote) {
+		if(vote.getId() == null  || vote.getId().isEmpty()) {
+			UUID uuid = UUID.randomUUID();
+			vote.setId(uuid.toString());
+		}
 		if(vote.getVotingDate() == null) {
 			vote.setVotingDate(new Date(Calendar.getInstance().getTimeInMillis()));
 		}
@@ -55,8 +59,8 @@ public class DefaultVoteService implements VoteService {
 	}
 
 	@Override
-	public void deleteVoteById(String userId, String restaurantId, Date votingDate) {
-		voteRepository.delete(new VotePK(userId, restaurantId, votingDate));
+	public void deleteVoteById(String id) {
+		voteRepository.delete(id);
 		
 	}
 
@@ -73,7 +77,13 @@ public class DefaultVoteService implements VoteService {
 
 	@Override
 	public boolean isVoteExist(Vote vote) {
-		return voteRepository.findOne(new VotePK(vote.getUserId(), vote.getRestaurantId(), vote.getVotingDate())) != null;
+		return voteRepository.findByData(vote.getUser().getId(), vote.getVotingDate()) != null;
+	}
+	
+	@Override
+	public void executeVoting(Date votingDate) {
+		UUID uuid = UUID.randomUUID();
+		voteRepository.executeVoting(uuid.toString(), votingDate);
 	}
 
 }

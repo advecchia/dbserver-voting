@@ -59,7 +59,6 @@ angular.module('votingApp').factory('UsersService',
         $http.post(urls.USERS_SERVICE_API, user)
             .then(
                 function (response) {
-                    loadAllUsers();
                     deferred.resolve(response.data);
                 },
                 function (errResponse) {
@@ -76,7 +75,6 @@ angular.module('votingApp').factory('UsersService',
         $http.put(urls.USERS_SERVICE_API + id, user)
             .then(
                 function (response) {
-                    loadAllUsers();
                     deferred.resolve(response.data);
                 },
                 function (errResponse) {
@@ -93,7 +91,6 @@ angular.module('votingApp').factory('UsersService',
         $http.delete(urls.USERS_SERVICE_API + id)
             .then(
                 function (response) {
-                    loadAllUsers();
                     deferred.resolve(response.data);
                 },
                 function (errResponse) {

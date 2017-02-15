@@ -3,49 +3,57 @@ package com.dbserver.voting.models;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.io.Serializable;
 import java.sql.Date;
  
 @Entity
-@IdClass(VotePK.class)
 @Table(name="votes")
 public class Vote implements Serializable {
-	/**
-	 * 
-	 */
+	
 	private static final long serialVersionUID = 3678719375872828397L;
+    
+	@JsonProperty("id")
+	private String id;
+	
+	@JsonProperty("votingDate")
+    private Date votingDate;
+	
+	@JsonProperty("user")
+    private User user;
+    
+    @JsonProperty("restaurant")
+    private Restaurant restaurant;
+
+	public Vote() {
+		super();
+	}
+
+	@JsonCreator(mode=JsonCreator.Mode.DELEGATING)
+	public Vote(@JsonProperty("id") String id, @JsonProperty("votingDate") Date votingDate, 
+			@JsonProperty("user") User user, @JsonProperty("restaurant") Restaurant restaurant) {
+		super();
+		this.id = id;
+		this.votingDate = votingDate;
+		this.user = user;
+		this.restaurant = restaurant;
+	}
 
 	@Id
 	@NotNull
-    @Column(name="userId", nullable=false)
-    private String userId;
+    @Column(name="id", nullable=false)
+	public String getId() {
+		return id;
+	}
 
-	@Id
-	@NotNull
-	@Column(name="restaurantId", nullable=false)
-    private String restaurantId;
- 
-	@Id
+	public void setId(String id) {
+		this.id = id;
+	}
+
 	@NotNull
     @Column(name="votingDate", nullable=false)
-    private Date votingDate;
-
-	public String getUserId() {
-		return userId;
-	}
-
-	public void setUserId(String userId) {
-		this.userId = userId;
-	}
-
-	public String getRestaurantId() {
-		return restaurantId;
-	}
-
-	public void setRestaurantId(String restaurantId) {
-		this.restaurantId = restaurantId;
-	}
-
 	public Date getVotingDate() {
 		return votingDate;
 	}
@@ -54,12 +62,31 @@ public class Vote implements Serializable {
 		this.votingDate = votingDate;
 	}
 
+	@ManyToOne
+    @JoinColumn(name = "userId")
+	public User getUser() {
+		return user;
+	}
+	
+	public void setUser(User user) {
+		this.user = user;
+	}
+
+	@ManyToOne
+    @JoinColumn(name = "restaurantId")
+	public Restaurant getRestaurant() {
+		return restaurant;
+	}
+	
+	public void setRestaurant(Restaurant restaurant) {
+		this.restaurant = restaurant;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((restaurantId == null) ? 0 : restaurantId.hashCode());
-		result = prime * result + ((userId == null) ? 0 : userId.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((votingDate == null) ? 0 : votingDate.hashCode());
 		return result;
 	}
@@ -73,27 +100,32 @@ public class Vote implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		Vote other = (Vote) obj;
-		if (restaurantId == null) {
-			if (other.restaurantId != null)
+		if (id == null) {
+			if (other.id != null)
 				return false;
-		} else if (!restaurantId.equals(other.restaurantId))
-			return false;
-		if (userId == null) {
-			if (other.userId != null)
-				return false;
-		} else if (!userId.equals(other.userId))
+		} else if (!id.equals(other.id))
 			return false;
 		if (votingDate == null) {
 			if (other.votingDate != null)
 				return false;
 		} else if (!votingDate.equals(other.votingDate))
 			return false;
+		if (user == null) {
+			if (other.user != null)
+				return false;
+		} else if (!user.equals(other.user))
+			return false;
+		if (restaurant == null) {
+			if (other.restaurant != null)
+				return false;
+		} else if (!restaurant.equals(other.restaurant))
+			return false;
 		return true;
 	}
 
 	@Override
 	public String toString() {
-		return "Vote [userId=" + userId + ", restaurantId=" + restaurantId + ", votingDate=" + votingDate + "]";
+		return "Vote [id=" + id + ", votingDate=" + votingDate + ", user=" + user + ", restaurant=" + restaurant + "]";
 	}
 
 }

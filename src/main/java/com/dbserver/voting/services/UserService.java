@@ -8,6 +8,8 @@ public interface UserService {
 	User findById(String id);
 	 
 	User findByName(String name);
+	
+	User findByUsername(String username);
  
     void saveUser(User user);
  
@@ -20,4 +22,6 @@ public interface UserService {
     List<User> findAllUsers();
  
     boolean isUserExist(User user);
+    
+    User authorize(User user);
 }

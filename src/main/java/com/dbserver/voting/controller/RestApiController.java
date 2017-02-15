@@ -51,10 +51,28 @@ public class RestApiController {
 	/**
 	 * API for users
 	 */
+	// -------------------Authorize user by login-------------------------------------------
+
+ 	@RequestMapping(value = usersPath + "/authorize", method = RequestMethod.POST)
+ 	public ResponseEntity<?> authorizeUser(@RequestBody User user, UriComponentsBuilder ucBuilder) {
+ 		logger.info("Trying to authorize User : {}", user);
+
+ 		User existingUser = userService.authorize(user); 
+ 		logger.info("ExistingUser : {}", existingUser);
+		if (existingUser == null) {
+ 			String message = "User or password invalid.";
+ 			logger.error(message);
+ 			return new ResponseEntity<>(new VotingErrorType(message), HttpStatus.NOT_FOUND);
+ 		}
+		existingUser.setPassword("");
+
+ 		return new ResponseEntity<User>(existingUser, HttpStatus.OK);
+ 	}
+
 	// -------------------Retrieve All Users---------------------------------------------
 	 
     @RequestMapping(value = usersPath + "/", method = RequestMethod.GET)
-    public ResponseEntity<List<User>> listAllUsers() {
+    private ResponseEntity<List<User>> listAllUsers() {
         List<User> users = userService.findAllUsers();
         if (users.isEmpty()) {
             return new ResponseEntity<List<User>>(HttpStatus.NO_CONTENT);
@@ -83,7 +101,7 @@ public class RestApiController {
  		logger.info("Creating User : {}", user);
 
  		if (userService.isUserExist(user)) {
- 			String message = "Unable to create. A User with name " + user.getName() + " already exist.";
+ 			String message = "Unable to create. A User with username " + user.getUsername() + " already exist.";
  			logger.error(message);
  			return new ResponseEntity<>(new VotingErrorType(message), HttpStatus.CONFLICT);
  		}
@@ -97,7 +115,7 @@ public class RestApiController {
     // ------------------- Update a User ------------------------------------------------
     
     @RequestMapping(value = usersPath + "/{id}", method = RequestMethod.PUT)
-    public ResponseEntity<?> updateUser(@PathVariable("id") String id, @RequestBody User user) {
+    private ResponseEntity<?> updateUser(@PathVariable("id") String id, @RequestBody User user) {
         logger.info("Updating User with id {}", id);
  
         User currentUser = userService.findById(id);
@@ -117,7 +135,7 @@ public class RestApiController {
     // ------------------- Delete a User-----------------------------------------
     
     @RequestMapping(value = usersPath + "/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<?> deleteUser(@PathVariable("id") String id) {
+    private ResponseEntity<?> deleteUser(@PathVariable("id") String id) {
         logger.info("Fetching & Deleting User with id {}", id);
  
         User user = userService.findById(id);
@@ -133,7 +151,7 @@ public class RestApiController {
     // ------------------- Delete All Users-----------------------------
 
     @RequestMapping(value = usersPath + "/", method = RequestMethod.DELETE)
-    public ResponseEntity<User> deleteAllUsers() {
+    private ResponseEntity<User> deleteAllUsers() {
         logger.info("Deleting All Users");
  
         userService.deleteAllUsers();
@@ -219,14 +237,21 @@ public class RestApiController {
         	logger.error(message);
             return new ResponseEntity<>(new VotingErrorType(message), HttpStatus.NOT_FOUND);
         }
-        restaurantService.deleteRestaurantById(id);
-        return new ResponseEntity<Restaurant>(HttpStatus.NO_CONTENT);
+
+        try {
+        	restaurantService.deleteRestaurantById(id);
+        	return new ResponseEntity<Restaurant>(HttpStatus.NO_CONTENT);
+        } catch (Exception e) {
+        	String message = "Unable to delete a Restaurant that has votes.";
+        	logger.error(message);
+            return new ResponseEntity<>(new VotingErrorType(message), HttpStatus.NOT_MODIFIED);
+        }
     }
 
     // ------------------- Delete All Restaurants-----------------------------
 
     @RequestMapping(value = restaurantsPath + "/", method = RequestMethod.DELETE)
-    public ResponseEntity<Restaurant> deleteAllRestaurants() {
+    private ResponseEntity<Restaurant> deleteAllRestaurants() {
         logger.info("Deleting All Restaurants");
  
         restaurantService.deleteAllRestaurants();
@@ -251,7 +276,7 @@ public class RestApiController {
     // -------------------Retrieve Single Winner------------------------------------------
     
     @RequestMapping(value = winnersPath + "/{id}", method = RequestMethod.GET)
-    public ResponseEntity<?> getWinner(@PathVariable("id") String id) {
+    private ResponseEntity<?> getWinner(@PathVariable("id") String id) {
         logger.info("Fetching Winner with id {}", id);
         Winner winner = winnerService.findById(id);
         if (winner == null) {
@@ -265,7 +290,7 @@ public class RestApiController {
     // -------------------Create a Winner-------------------------------------------
 
  	@RequestMapping(value = winnersPath + "/", method = RequestMethod.POST)
- 	public ResponseEntity<?> createWinner(@RequestBody Winner winner, UriComponentsBuilder ucBuilder) {
+ 	private ResponseEntity<?> createWinner(@RequestBody Winner winner, UriComponentsBuilder ucBuilder) {
  		logger.info("Creating Winner : {}", winner);
 
  		if (winnerService.isWinnerExist(winner)) {
@@ -276,14 +301,14 @@ public class RestApiController {
  		winnerService.saveWinner(winner);
 
  		HttpHeaders headers = new HttpHeaders();
- 		headers.setLocation(ucBuilder.path("/api/v1/winners/{id}").buildAndExpand(winner.getRestaurantId()).toUri());
+ 		headers.setLocation(ucBuilder.path("/api/v1/winners/{id}").buildAndExpand(winner.getRestaurant().getId()).toUri());
  		return new ResponseEntity<String>(headers, HttpStatus.CREATED);
  	}
 
     // ------------------- Update a Winner ------------------------------------------------
     
     @RequestMapping(value = winnersPath + "/{id}", method = RequestMethod.PUT)
-    public ResponseEntity<?> updateWinner(@PathVariable("id") String id, @RequestBody Winner winner) {
+    private ResponseEntity<?> updateWinner(@PathVariable("id") String id, @RequestBody Winner winner) {
         logger.info("Updating Winner with id {}", id);
  
         Winner currentWinner = winnerService.findById(id);
@@ -303,7 +328,7 @@ public class RestApiController {
     // ------------------- Delete a Winner-----------------------------------------
     
     @RequestMapping(value = winnersPath + "/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<?> deleteWinner(@PathVariable("id") String id) {
+    private ResponseEntity<?> deleteWinner(@PathVariable("id") String id) {
         logger.info("Fetching & Deleting Winner with id {}", id);
  
         Winner winner = winnerService.findById(id);
@@ -319,7 +344,7 @@ public class RestApiController {
     // ------------------- Delete All Winners-----------------------------
 
     @RequestMapping(value = winnersPath + "/", method = RequestMethod.DELETE)
-    public ResponseEntity<Winner> deleteAllWinners() {
+    private ResponseEntity<Winner> deleteAllWinners() {
         logger.info("Deleting All Winners");
  
         winnerService.deleteAllWinners();
@@ -340,17 +365,17 @@ public class RestApiController {
         }
         return new ResponseEntity<List<Vote>>(votes, HttpStatus.OK);
     }
-
-    // -------------------Retrieve Single Vote------------------------------------------
     
-    @RequestMapping(value = votesPath + "/user/{userId}/restaurant/{restaurantId}/date/{votingDate}", method = RequestMethod.GET)
-    public ResponseEntity<?> getVote(@PathVariable("userId") String userId, @PathVariable("restaurantId") String restaurantId, @PathVariable("votingDate") Date votingDate) {
-        logger.info("Fetching Vote with userId {}, restaurantId {}, votingDate {}", userId, restaurantId, votingDate);
-        Vote vote = voteService.findByIds(userId, restaurantId, votingDate);
-        if (vote == null) {
-        	String message = "Vote with userId " + userId + ", restaurantId + " + restaurantId + ", votingDate " + votingDate + " not found";
+    // -------------------Retrieve Vote by Id ------------------------------------------
+    
+    @RequestMapping(value = votesPath + "/{id}", method = RequestMethod.GET)
+    public ResponseEntity<Vote> getVoteById(@PathVariable("id") String id) {
+        logger.info("Fetching Vote with id {}", id);
+        Vote vote = voteService.findById(id);
+        if (vote != null) {
+        	String message = "Vote with id " + id + " not found";
             logger.error(message);
-            return new ResponseEntity<>(new VotingErrorType(message), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<Vote>(HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<Vote>(vote, HttpStatus.OK);
     }
@@ -358,7 +383,7 @@ public class RestApiController {
     // -------------------Retrieve Votes by User ------------------------------------------
     
     @RequestMapping(value = votesPath + "/user/{id}", method = RequestMethod.GET)
-    public ResponseEntity<List<Vote>> getVotesByUser(@PathVariable("id") String id) {
+    private ResponseEntity<List<Vote>> getVotesByUser(@PathVariable("id") String id) {
         logger.info("Fetching Votes with userId {}", id);
         List<Vote> votes = voteService.findByUserId(id);
         if (votes.isEmpty()) {
@@ -372,7 +397,7 @@ public class RestApiController {
     // -------------------Retrieve Votes by Restaurant ------------------------------------------
     
     @RequestMapping(value = votesPath + "/restaurant/{id}", method = RequestMethod.GET)
-    public ResponseEntity<List<Vote>> getVotesByRestaurant(@PathVariable("id") String id) {
+    private ResponseEntity<List<Vote>> getVotesByRestaurant(@PathVariable("id") String id) {
         logger.info("Fetching Votes with restaurantId {}", id);
         List<Vote> votes = voteService.findByRestaurantId(id);
         if (votes.isEmpty()) {
@@ -386,7 +411,7 @@ public class RestApiController {
     // -------------------Retrieve Votes by Voting Date ------------------------------------------
     
     @RequestMapping(value = votesPath + "/date/{votingDate}", method = RequestMethod.GET)
-    public ResponseEntity<List<Vote>> getVotesByVotingDate(@PathVariable("votingDate") Date votingDate) {
+    private ResponseEntity<List<Vote>> getVotesByVotingDate(@PathVariable("votingDate") Date votingDate) {
         logger.info("Fetching Votes with votingDate {}", votingDate);
         List<Vote> votes = voteService.findByVotingDate(votingDate);
         if (votes.isEmpty()) {
@@ -404,34 +429,34 @@ public class RestApiController {
  		logger.info("Creating Vote : {}", vote);
 
  		if (voteService.isVoteExist(vote)) {
- 			String message = "Unable to create. A Vote for userId " + vote.getUserId() + ", restaurantId + " + vote.getRestaurantId() + ", votingDate " + vote.getVotingDate() + " already exist.";
+ 			String message = "You already have voted today.";
  			logger.error(message);
  			return new ResponseEntity<>(new VotingErrorType(message), HttpStatus.CONFLICT);
  		}
  		voteService.saveVote(vote);
 
  		HttpHeaders headers = new HttpHeaders();
- 		headers.setLocation(ucBuilder.path("/api/v1/votes/user/{userId}/restaurant/{restaurantId}/date/{votingDate}").buildAndExpand(vote.getUserId(), vote.getRestaurantId(), vote.getVotingDate()).toUri());
+ 		headers.setLocation(ucBuilder.path("/api/v1/votes/{id}").buildAndExpand(vote.getId()).toUri());
  		return new ResponseEntity<String>(headers, HttpStatus.CREATED);
  	}
 
     // ------------------- Update a Vote ------------------------------------------------
     
-    @RequestMapping(value = votesPath + "/user/{userId}/restaurant/{restaurantId}/date/{votingDate}", method = RequestMethod.PUT)
-    public ResponseEntity<?> updateVote(@PathVariable("userId") String userId, @PathVariable("restaurantId") String restaurantId, @PathVariable("votingDate") Date votingDate, @RequestBody Vote vote) {
-        logger.info("Updating Vote with userId {}, restaurantId {}, votingDate {}", userId, restaurantId, votingDate);
+ 	@RequestMapping(value = votesPath + "/{id}", method = RequestMethod.PUT)
+    private ResponseEntity<?> updateVote(@PathVariable("id") String id, @RequestBody Vote vote) {
+        logger.info("Updating Vote with id {}", id);
 
-        Vote currentVote = voteService.findByIds(userId, restaurantId, votingDate);
+        Vote currentVote = voteService.findById(id);
  
         if (currentVote == null) {
-        	String message = "Unable to update. A Vote for userId " + userId + ", restaurantId + " + restaurantId + ", votingDate " + votingDate + " already exist.";
+        	String message = "Unable to update. A Vote for id " + id + " not exist.";
             logger.error(message);
             return new ResponseEntity<>(new VotingErrorType(message), HttpStatus.NOT_FOUND);
         }
  
-        currentVote.setUserId(userId);
-        currentVote.setRestaurantId(restaurantId);
-        currentVote.setVotingDate(votingDate);
+        currentVote.setId(id);
+        currentVote.setUser(vote.getUser());
+        currentVote.setRestaurant(vote.getRestaurant());
 
         voteService.updateVote(currentVote);
         return new ResponseEntity<Vote>(currentVote, HttpStatus.OK);
@@ -439,24 +464,24 @@ public class RestApiController {
     
     // ------------------- Delete a Vote-----------------------------------------
     
-    @RequestMapping(value = votesPath + "/user/{userId}/restaurant/{restaurantId}/date/{votingDate}", method = RequestMethod.DELETE)
-    public ResponseEntity<?> deleteVote(@PathVariable("userId") String userId, @PathVariable("restaurantId") String restaurantId, @PathVariable("votingDate") Date votingDate) {
-        logger.info("Fetching & Deleting Vote with userId {}, restaurantId {}, votingDate {}", userId, restaurantId, votingDate);
+ 	@RequestMapping(value = votesPath + "/{id}", method = RequestMethod.DELETE)
+    private ResponseEntity<?> deleteVote(@PathVariable("id") String id) {
+        logger.info("Fetching & Deleting Vote with id {}", id);
  
-        Vote vote = voteService.findByIds(userId, restaurantId, votingDate);
+        Vote vote = voteService.findById(id);
         if (vote == null) {
-        	String message = "Unable to delete. A Vote for userId " + userId + ", restaurantId + " + restaurantId + ", votingDate " + votingDate + " not found.";
+        	String message = "Unable to delete. A Vote for id " + id + " not found.";
         	logger.error(message);
             return new ResponseEntity<>(new VotingErrorType(message), HttpStatus.NOT_FOUND);
         }
-        voteService.deleteVoteById(userId, restaurantId, votingDate);
+        voteService.deleteVoteById(id);
         return new ResponseEntity<Vote>(HttpStatus.NO_CONTENT);
     }
 
     // ------------------- Delete All Votes-----------------------------
 
     @RequestMapping(value = votesPath + "/", method = RequestMethod.DELETE)
-    public ResponseEntity<Vote> deleteAllVotes() {
+    private ResponseEntity<Vote> deleteAllVotes() {
         logger.info("Deleting All Votes");
  
         voteService.deleteAllVotes();
