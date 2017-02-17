@@ -43,7 +43,7 @@ Open the `.bashrc` file in your home and add the following lines (correct the pa
 > export JAVA_HOME=/usr/lib/jvm/java-8-oracle  
 > export JRE_HOME=/usr/lib/jvm/java-8-oracle/jre  
 
-This will add to system PA# Instalando Maven para controle de dependências
+Add maven to system configuration to deal with project dependencies:  
 > $ sudo apt-get install maven  
 
 ## User account configuration (for web ui access)
@@ -76,18 +76,21 @@ Download the application from Git using the following [repository](https://githu
 > $ git clone https://github.com/advecchia/dbserver-voting.git  
 > $ cd dbserver-voting  
 
+Install javascript dependencies:  
+> $ npm install  
+
 Update the target folder and run the system in local or production modes:  
 > $ mvn spring-boot:run -Drun.profiles=local  
 > $ mvn spring-boot:run -Drun.profiles=prod  
 
 Open in your browser this [System url](http://localhost:8080/voting).
 
-
 # Tests
 An automated test coverage is important so a value over 90% is considered acceptable.
-To run the tests execute the following command:
-> $ TBD
-> $ karma run  
+To run the front end tests execute the following command:
+> $ karma start  
+
+After you can see a new folder called `coverage` in the root folder. In the second folder level there is a `index.html` file that when oppened show the coverage report.
 
 # Challenges
 Think about the architecture and also make the initial setup configuration is of course the most difficult part of the task.

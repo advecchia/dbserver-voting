@@ -9,7 +9,7 @@ angular.module('votingApp').controller('WinnersController',
  
     vm.getAllWinners = getAllWinners;
 
-    function getAllWinners(){
+    function getAllWinners() {
         return WinnersService.getAllWinners();
     }
 }]);

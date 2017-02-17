@@ -1,7 +1,7 @@
 'use strict';
  
 angular.module('votingApp').controller('LoginController',
-    ['LoginService', '$scope', '$state', function( LoginService, $scope, $state) {
+    ['LoginService', '$scope', '$state', function(LoginService, $scope, $state) {
 
     let vm = this;
     vm.user = {};

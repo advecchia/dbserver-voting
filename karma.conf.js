@@ -19,13 +19,14 @@ module.exports = function(config) {
       'node_modules/angular-mocks/angular-mocks.js',
       'node_modules/angular-ui-router/release/angular-ui-router.js',
       'node_modules/localforage/dist/localforage.js',
-      'node_modules/ng-storage/ngStorage.js',
+      'node_modules/ngstorage/ngStorage.js',
       'src/main/resources/static/js/components/main.js',
       'src/main/resources/static/js/components/**/*.js',
-      'src/main/resources/templates/**/*.ftl',
+      'src/main/resources/templates/*.ftl',
+      'src/main/resources/static/js/components/main.spec.js',
       'src/main/resources/static/js/components/**/*.spec.js'
     ],
-    
+
     // web server port8
     port: 9876,
 

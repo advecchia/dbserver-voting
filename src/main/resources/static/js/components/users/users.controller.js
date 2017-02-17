@@ -105,8 +105,8 @@ angular.module('votingApp').controller('UsersController',
     }
 
     function reset(){
-        vm.successMessage='';
-        vm.errorMessage='';
+        vm.successMessage = '';
+        vm.errorMessage = '';
         vm.user = {};
         $scope.usersForm.$setPristine(); //reset Form
     }

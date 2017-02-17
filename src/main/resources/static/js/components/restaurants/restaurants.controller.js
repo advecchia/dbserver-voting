@@ -94,14 +94,14 @@ angular.module('votingApp').controller('RestaurantsController',
                 vm.restaurant = restaurant;
             },
             function (errResponse) {
-                console.error('Error while removing Restaurant: ' + id + ', Error: ' + errResponse.data.errorMessage);
+                console.error('Error while getting Restaurant: ' + id + ', Error: ' + errResponse.data.errorMessage);
             }
         );
     }
 
     function reset(){
-        vm.successMessage='';
-        vm.errorMessage='';
+        vm.successMessage = '';
+        vm.errorMessage = '';
         vm.restaurant = {};
         $scope.restaurantsForm.$setPristine(); //reset Form
     }
