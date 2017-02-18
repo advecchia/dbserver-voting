@@ -83,14 +83,20 @@ Update the target folder and run the system in local or production modes:
 > $ mvn spring-boot:run -Drun.profiles=local  
 > $ mvn spring-boot:run -Drun.profiles=prod  
 
-Open in your browser this [System url](http://localhost:8080/voting).
+Open in your browser this [System url](http://localhost:8080/voting).  
 
-# Tests
-An automated test coverage is important so a value over 90% is considered acceptable.
-To run the front end tests execute the following command:
+# Backend Tests
+Run unit test and see the coverage report from Jacoco plugin using the below command:  
+> mvn clean test jacoco:report  
+
+Open the file `index.html` at `{project_folder}/target/site/` to see the report.  
+
+# Frontend Tests
+An automated test coverage is important so a value over 90% is considered acceptable.  
+To run the front end tests execute the following command:  
 > $ karma start  
 
-After you can see a new folder called `coverage` in the root folder. In the second folder level there is a `index.html` file that when oppened show the coverage report.
+After you can see a new folder called `coverage` in the root folder. In the second folder level there is a `index.html` file that when oppened show the coverage report.  
 
 # Challenges
 Think about the architecture and also make the initial setup configuration is of course the most difficult part of the task.
