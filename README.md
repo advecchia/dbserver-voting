@@ -5,6 +5,23 @@ This experiment will be running in a Ubuntu 14.04LTS machine with eclipse, for a
 
 This system will allow the users to vote using a list of available restaurants and also to see the restaurant winner.
 
+# Jenkins configuration
+I have followed the following link to install a local Jenkins, you can do the same for the sake of the test: [Install Jenkins](https://wiki.jenkins-ci.org/display/JENKINS/Installing+Jenkins+on+Ubuntu "Jenkins on Ubuntu").  
+
+Change the current port for Jenkins to `8081` because we will use `8080` for Tomcat server. Follow these steps:  
+> $ sudo gedit /etc/init.d/jenkins
+
+Look for `$HTTP_PORT` variable and change its value to `8081`. close the file and restart the server, execute:  
+> sudo service jenkins restart
+
+You will can access the Jenkins in your browser followin this link: [Link to local jenkins](http://localhost:8081/jenkins/login?from=%2Fjenkins%2F).  
+
+After the initial steps and accout creation, modify the JDK and Maven settings, go to [Configure Tools](http://localhost:8081/jenkins/configureTools/). Change JDK(build 1.8.0_121-b13) and Maven(3.0.5) installations.  
+
+Go to Jenkins home and a new item, add the github project url: `https://github.com/advecchia/dbserver-voting/` and add the github repository to download everything (at Source Code Management): https://github.com/advecchia/dbserver-voting.git   
+
+Now at Jenkins home you will can a running job!
+
 # Installing Maven for dependecy control
 > $ sudo apt-get install maven
 
