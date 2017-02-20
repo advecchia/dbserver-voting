@@ -85,21 +85,25 @@ Update the target folder and run the system in local or production modes:
 
 Open in your browser this [System url](http://localhost:8080/voting).  
 
-# Backend Tests
+# Back end Tests
 Run unit test and see the coverage report from Jacoco plugin using the below command:  
 > mvn clean test jacoco:report  
 
-Open the file `index.html` at `{project_folder}/target/site/` to see the report.  
+Open the file `index.html` at `{project_folder}/target/site/` to see the report. The coverage will be below 60% but there some private classes from API that I have not make test at this moment because they are not accessible.  
 
-# Frontend Tests
+# Front end Tests
 An automated test coverage is important so a value over 90% is considered acceptable.  
 To run the front end tests execute the following command:  
 > $ karma start  
 
-After you can see a new folder called `coverage` in the root folder. In the second folder level there is a `index.html` file that when oppened show the coverage report.  
+After that you can see a new folder called `coverage` in the root folder.  
+In the second folder level there is a `index.html` file that when opened show the coverage report.  
+
+# Documentation
+The API docs are generated using swagger2 plugin, after run the system, take a look at `http://localhost:8080/voting/swagger-ui.html` to see it.  
 
 # Challenges
-Think about the architecture and also make the initial setup configuration is of course the most difficult part of the task.
+Think about the architecture and also make the initial setup configuration is of course the most difficult part of the task.  
 
 # Improvements
-Configure the use of Flyway plugin to deal with database migrations.
+Configure the use of Flyway plugin to deal with database migrations.  

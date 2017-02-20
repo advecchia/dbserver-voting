@@ -48,6 +48,14 @@ public class RestApiController {
 	@Autowired
 	WinnerService winnerService;
 	
+	public RestApiController(UserService userService, RestaurantService restaurantService, 
+			VoteService voteService, WinnerService winnerService) {
+        this.userService = userService;
+        this.restaurantService = restaurantService;
+        this.voteService = voteService;
+        this.winnerService = winnerService;
+    }
+
 	/**
 	 * API for users
 	 */
@@ -369,13 +377,13 @@ public class RestApiController {
     // -------------------Retrieve Vote by Id ------------------------------------------
     
     @RequestMapping(value = votesPath + "/{id}", method = RequestMethod.GET)
-    public ResponseEntity<Vote> getVoteById(@PathVariable("id") String id) {
+    public ResponseEntity<?> getVoteById(@PathVariable("id") String id) {
         logger.info("Fetching Vote with id {}", id);
         Vote vote = voteService.findById(id);
         if (vote != null) {
         	String message = "Vote with id " + id + " not found";
             logger.error(message);
-            return new ResponseEntity<Vote>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new VotingErrorType(message), HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<Vote>(vote, HttpStatus.OK);
     }
@@ -383,13 +391,13 @@ public class RestApiController {
     // -------------------Retrieve Votes by User ------------------------------------------
     
     @RequestMapping(value = votesPath + "/user/{id}", method = RequestMethod.GET)
-    private ResponseEntity<List<Vote>> getVotesByUser(@PathVariable("id") String id) {
+    private ResponseEntity<?> getVotesByUser(@PathVariable("id") String id) {
         logger.info("Fetching Votes with userId {}", id);
         List<Vote> votes = voteService.findByUserId(id);
         if (votes.isEmpty()) {
         	String message = "Votes with userId " + id + " not found";
             logger.error(message);
-            return new ResponseEntity<List<Vote>>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new VotingErrorType(message), HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<List<Vote>>(votes, HttpStatus.OK);
     }
@@ -397,13 +405,13 @@ public class RestApiController {
     // -------------------Retrieve Votes by Restaurant ------------------------------------------
     
     @RequestMapping(value = votesPath + "/restaurant/{id}", method = RequestMethod.GET)
-    private ResponseEntity<List<Vote>> getVotesByRestaurant(@PathVariable("id") String id) {
+    private ResponseEntity<?> getVotesByRestaurant(@PathVariable("id") String id) {
         logger.info("Fetching Votes with restaurantId {}", id);
         List<Vote> votes = voteService.findByRestaurantId(id);
         if (votes.isEmpty()) {
         	String message = "Votes with restaurantId " + id + " not found";
             logger.error(message);
-            return new ResponseEntity<List<Vote>>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new VotingErrorType(message), HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<List<Vote>>(votes, HttpStatus.OK);
     }
@@ -411,13 +419,13 @@ public class RestApiController {
     // -------------------Retrieve Votes by Voting Date ------------------------------------------
     
     @RequestMapping(value = votesPath + "/date/{votingDate}", method = RequestMethod.GET)
-    private ResponseEntity<List<Vote>> getVotesByVotingDate(@PathVariable("votingDate") Date votingDate) {
+    private ResponseEntity<?> getVotesByVotingDate(@PathVariable("votingDate") Date votingDate) {
         logger.info("Fetching Votes with votingDate {}", votingDate);
         List<Vote> votes = voteService.findByVotingDate(votingDate);
         if (votes.isEmpty()) {
         	String message = "Votes with votingDate " + votingDate + " not found";
             logger.error(message);
-            return new ResponseEntity<List<Vote>>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new VotingErrorType(message), HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<List<Vote>>(votes, HttpStatus.OK);
     }
